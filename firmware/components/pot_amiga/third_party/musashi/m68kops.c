@@ -34380,7 +34380,10 @@ static void m68k_op_unpk_16_mm(void)
 /* potluck-amiga: the two tables (768 KB) live on the heap -- in PSRAM on the board, which defines
    M68K_TABLE_ALLOC -- and are allocated once by m68ki_build_opcode_table(); null if that failed. */
 #include <stdlib.h>
-#ifndef M68K_TABLE_ALLOC
+#ifdef M68K_TABLE_ALLOC_FN
+extern void *M68K_TABLE_ALLOC_FN(size_t n);
+#define M68K_TABLE_ALLOC(n) M68K_TABLE_ALLOC_FN(n)
+#else
 #define M68K_TABLE_ALLOC(n) malloc(n)
 #endif
 void (**m68ki_instruction_jump_table)(void); /* opcode handler jump table */

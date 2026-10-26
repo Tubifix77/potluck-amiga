@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "system": "lab",
+  "min_core_version": 1,
+  "comment": "M27: the Amiga 500 emulator on C (0x8160), its ROM from the PC's file service, its frames to the PC at 192.168.0.7:47023.",
+  "nodes": [
+    {"node_id": 25344, "label": "A"},
+    {"node_id": 29544, "label": "B"},
+    {"node_id": 33120, "label": "C"},
+    {"node_id": 254, "label": "pc", "kind": "host", "placement": true}
+  ],
+  "actors": [
+    {"name": "amiga", "module": "ext:amiga/emu", "latency_class": 4, "pin": 33120,
+     "needs": ["potluck://lab/svc/file"], "config": {"stream_every": 1}}
+  ]
+}

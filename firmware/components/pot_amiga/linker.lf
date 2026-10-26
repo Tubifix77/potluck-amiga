@@ -1,0 +1,6 @@
+# The emulator's static data goes to PSRAM: a Potluck node's internal static RAM is capped at 64 KB and nearly full.
+[mapping:pot_amiga]
+archive: libpot_amiga.a
+entries:
+    if ESP_ALLOW_BSS_SEG_EXTERNAL_MEMORY = y:
+        * (extram_bss)

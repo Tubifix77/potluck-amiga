@@ -14,7 +14,7 @@ This repository contains code from these projects, under their own licences:
 Changes made here to the code above:
 
 * musashi/m68kops.c, musashi/m68kcpu.c: the opcode jump table and the cycle table (768 KB) are heap pointers,
-  allocated once by m68ki_build_opcode_table() (M68K_TABLE_ALLOC; PSRAM on the board) -- the declarations
+  allocated once by m68ki_build_opcode_table() (M68K_TABLE_ALLOC_FN names the allocator; PSRAM on the board) -- the declarations
   amiga500-esp32's esp32/m68kops.h already expected.
 
 No Amiga ROM, Kickstart, Workbench or other Commodore or Amiga software is included in this repository. The test

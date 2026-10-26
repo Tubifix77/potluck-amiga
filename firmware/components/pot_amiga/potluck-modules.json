@@ -1,0 +1,24 @@
+{
+  "component": "pot_amiga",
+  "types": [144, 159],
+  "requires": ["wifi"],
+  "modules": [
+    {
+      "module": "ext:amiga/emu",
+      "type": 144,
+      "placement": "pinned",
+      "outputs": ["{node}/amiga/state", "{node}/amiga/fps", "{node}/amiga/frames", "{node}/amiga/sent_fps",
+                  "{node}/amiga/kbps", "{node}/amiga/dropped"],
+      "config": [
+        {"name": "system_prefix", "kind": "system_prefix"},
+        {"name": "provider", "kind": "u16", "default": 254, "min": 1, "max": 65535},
+        {"name": "ip0", "kind": "u8", "default": 192},
+        {"name": "ip1", "kind": "u8", "default": 168},
+        {"name": "ip2", "kind": "u8", "default": 0},
+        {"name": "ip3", "kind": "u8", "default": 7},
+        {"name": "port", "kind": "u16", "default": 47023, "min": 1, "max": 65535},
+        {"name": "stream_every", "kind": "u8", "default": 1, "min": 0, "max": 50}
+      ]
+    }
+  ]
+}
