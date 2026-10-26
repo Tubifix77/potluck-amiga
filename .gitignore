@@ -1,0 +1,7 @@
+pc/build/
+pc/out/
+rom/*.bin
+*.rom
+*.adf
+kick*.A500
+__pycache__/

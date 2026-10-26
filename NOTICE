@@ -1,0 +1,23 @@
+potluck-amiga -- an Amiga 500 emulator as a Potluck app (Potluck's M27 experiment)
+
+This repository contains code from these projects, under their own licences:
+
+* amiga500-esp32 -- the Amiga 500 chipset (Agnus, Denise, Paula, the CIAs, the floppy), Copyright (c) 2026
+  Massimiliano, MIT licence: firmware/components/pot_amiga/third_party/a500/ (LICENSE beside it).
+  https://github.com/Makerstown/amiga500-esp32 at ba0f6f10efde64abcd07c217ba46b5506dcc7a4b
+* Musashi -- the Motorola 68000 core, Copyright 1998-2002 Karl Stenerud, MIT licence:
+  firmware/components/pot_amiga/third_party/musashi/ (its readme.txt holds the licence). Taken from the
+  amiga500-esp32 copy above (m68kconf.h from its esp32/ folder: a plain 68000).
+* SoftFloat, Release 2 -- John R. Hauser, through MAME and Musashi: third_party/musashi/softfloat/. THIS IS A
+  DERIVATIVE WORK of SoftFloat: the files there are kept with their notices, as its terms ask (softfloat.h).
+
+Changes made here to the code above:
+
+* musashi/m68kops.c, musashi/m68kcpu.c: the opcode jump table and the cycle table (768 KB) are heap pointers,
+  allocated once by m68ki_build_opcode_table() (M68K_TABLE_ALLOC; PSRAM on the board) -- the declarations
+  amiga500-esp32's esp32/m68kops.h already expected.
+
+No Amiga ROM, Kickstart, Workbench or other Commodore or Amiga software is included in this repository. The test
+ROM (rom/make_test_rom.py) is this project's own 68000 program.
+
+Amiga is a trademark of its owner; this project is not affiliated with it.
