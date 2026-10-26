@@ -13,6 +13,18 @@ the cell's links?
 - **The ROM comes from the PC**, over Potluck's bulk channel (M25): the cluster file's `bulk.folder` holds it, and the
   board reads it into PSRAM at start.
 
+## What M27 measured (2026-10-26, three ESP32-S3 N16R8 boards at 160 MHz)
+
+| | frames a second on the board | at the PC | the worst link's heartbeat loss over the no-stream phases |
+|---|---|---|---|
+| emulator alone | 27.3-28.2 (41 ms a frame) | -- | (the baseline: 0.0-1.6 % per link) |
+| every frame streamed | 7.3 (142 ms; 64 ms of it sending) | 7.26 of 7.28, ~4.8 Mbit/s | +1.50, +1.42 points (two runs) |
+| every 5th frame | 17.8 emulated, 3.5 streamed | 3.54 of 3.55 | +1.16, +1.25 |
+
+Potluck's kill line was two points. Once, in about 45 minutes of streaming, the board's radio jammed for 60 s (not
+reproduced in a 20-minute stream), and a firmware rollout could not reach the board while it streamed: switch the stream
+off (`POT! amiga stream 0` on its console) before a rollout.
+
 ## Layout
 
 | | |
