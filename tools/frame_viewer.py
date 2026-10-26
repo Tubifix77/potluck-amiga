@@ -31,6 +31,7 @@ class Stream:
         self.rgb = bytearray(W * H * 3)
         self.frames = self.lost = self.lines = self.bytes = 0
         self.last_frame: int | None = None
+        self.open_frame: int | None = None
         self.dirty = False
 
     def packet(self, data: bytes) -> bool:
@@ -41,12 +42,17 @@ class Stream:
         frame = struct.unpack_from("<I", data, 4)[0]
         self.bytes += len(data)
         if n == 0:
-            if self.last_frame is not None and frame > self.last_frame + 1:
-                self.lost += frame - self.last_frame - 1  # numbers the board streamed but whose close never came
-            if self.last_frame is None or frame > self.last_frame:
-                self.last_frame = frame
-                self.frames += 1
+            # A frame is counted when its close arrives. The board numbers every frame it emulates, streamed or not
+            # (`POT! amiga stream <n>` streams every n-th), and starts again from 0 when it restarts: a gap here is
+            # not a loss -- frames whose lines came but whose close did not are (open frames, counted below).
+            if self.open_frame == frame:
+                self.open_frame = None
+            self.last_frame = frame
+            self.frames += 1
             return True
+        if self.open_frame is not None and self.open_frame != frame:
+            self.lost += 1  # the previous frame's close never came
+        self.open_frame = frame
         for i in range(n):
             off = 8 + i * ENTRY
             if off + ENTRY > len(data):
