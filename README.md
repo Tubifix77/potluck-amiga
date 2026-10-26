@@ -22,8 +22,9 @@ the cell's links?
 | every 5th frame | 17.8 emulated, 3.5 streamed | 3.54 of 3.55 | +1.16, +1.25 |
 
 Potluck's kill line was two points. Once, in about 45 minutes of streaming, the board's radio jammed for 60 s (not
-reproduced in a 20-minute stream), and a firmware rollout could not reach the board while it streamed: switch the stream
-off (`POT! amiga stream 0` on its console) before a rollout.
+reproduced in a 20-minute stream), and a firmware rollout could not reach the board while it streamed. Since then the
+app pauses its stream while an update arrives (Potluck's `BoardServices::receiving_image`, firmware from 2026-10-26 on);
+on older firmware switch it off by hand first (`POT! amiga stream 0` on the board's console).
 
 ## Layout
 

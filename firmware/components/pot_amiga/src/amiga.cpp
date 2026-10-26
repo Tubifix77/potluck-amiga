@@ -94,6 +94,13 @@ void EmuActor::ask(uint32_t now_ms) {
 
 void EmuActor::tick(uint32_t now) {
     now_ = now;
+    // M27's lesson: streaming 4.7 Mbit/s, the board could not take a firmware rollout. While an image arrives the
+    // stream pauses (the emulator runs on); Potluck firmware before 2026-10-26 has no receiving_image and never pauses.
+    const bool updating = board_ != nullptr && board_->receiving_image != nullptr && board_->receiving_image(board_->ctx);
+    if (updating != updating_) {
+        updating_ = updating;
+        emu_set_stream_every(updating ? 0 : cfg_.stream_every);
+    }
     if (rom_ != nullptr && !emu_running()) {
         if (state_ == kReading && now - last_ms_ >= kQuietMs) {
             asking_ = 0;
@@ -169,7 +176,7 @@ bool EmuActor::on_console(const char* line, size_t len) {
     const long every = std::strtol(line + n, nullptr, 10);
     if (every < 0 || every > 50) return true;
     cfg_.stream_every = static_cast<uint8_t>(every);
-    emu_set_stream_every(cfg_.stream_every);
+    if (!updating_) emu_set_stream_every(cfg_.stream_every);  // during an update it takes effect afterwards
     std::printf("{\"t\":\"test\",\"cmd\":\"amiga stream\",\"stream_every\":%u}\n",  // console_send.py shows "test" records
                 static_cast<unsigned>(cfg_.stream_every));
     return true;
@@ -205,7 +212,7 @@ Actor* create(void* mem, const ActorDecl& d, const ActorEnv& env) {
     static_assert(sizeof(EmuActor) <= kActorSlotBytes, "EmuActor outgrew its actor slot");
     Config c;
     if (env.node == nullptr || !parse(d, c)) return nullptr;
-    return new (mem) EmuActor(*env.node, c);
+    return new (mem) EmuActor(*env.node, c, env.board);
 }
 
 size_t outputs(const ActorDecl& d, uint16_t node, uint16_t peer, NsDecl* out, size_t cap) {

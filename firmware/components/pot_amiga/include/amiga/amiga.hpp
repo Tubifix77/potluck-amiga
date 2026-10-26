@@ -69,7 +69,7 @@ void emu_stats(EmuStats* out);
 
 class EmuActor : public Actor {
   public:
-    EmuActor(Node& node, const Config& cfg) : node_(node), cfg_(cfg) {}
+    EmuActor(Node& node, const Config& cfg, const BoardServices* board) : node_(node), cfg_(cfg), board_(board) {}
     ~EmuActor() override;
     bool start(uint32_t now_ms) override;
     void tick(uint32_t now_ms) override;
@@ -94,6 +94,8 @@ class EmuActor : public Actor {
     uint32_t last_ms_ = 0, now_ = 0, published_at_ = 0;
     uint32_t prev_frames_ = 0, prev_sent_ = 0, prev_bytes_ = 0, prev_at_ = 0;
     float fps_ = 0, sent_fps_ = 0, kbps_ = 0;
+    const BoardServices* board_;
+    bool updating_ = false;  // an image arriving: the stream paused (BoardServices::receiving_image)
 };
 
 ActorKind emu_row();
