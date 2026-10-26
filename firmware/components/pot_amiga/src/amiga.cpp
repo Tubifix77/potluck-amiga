@@ -163,14 +163,15 @@ int EmuActor::on_call(uint16_t from_node, uint16_t msg_id, uint32_t path_hash, c
 }
 
 bool EmuActor::on_console(const char* line, size_t len) {
-    static const char kCmd[] = "amiga stream ";
+    static const char kCmd[] = "POT! amiga stream ";  // the runtime offers the whole line
     const size_t n = sizeof(kCmd) - 1;
     if (len <= n || std::strncmp(line, kCmd, n) != 0) return false;
     const long every = std::strtol(line + n, nullptr, 10);
     if (every < 0 || every > 50) return true;
     cfg_.stream_every = static_cast<uint8_t>(every);
     emu_set_stream_every(cfg_.stream_every);
-    std::printf("{\"t\":\"amiga_cfg\",\"stream_every\":%u}\n", static_cast<unsigned>(cfg_.stream_every));
+    std::printf("{\"t\":\"test\",\"cmd\":\"amiga stream\",\"stream_every\":%u}\n",  // console_send.py shows "test" records
+                static_cast<unsigned>(cfg_.stream_every));
     return true;
 }
 
@@ -180,10 +181,10 @@ size_t EmuActor::stats_json(char* buf, size_t cap, uint32_t) {
     const int n = std::snprintf(
         buf, cap,
         "{\"t\":\"amiga\",\"node\":%u,\"state\":%u,\"rom\":%u,\"every\":%u,\"frames\":%u,\"fps\":%.1f,\"frame_us\":%u,"
-        "\"sent\":%u,\"sent_fps\":%.1f,\"kbps\":%.0f,\"packets\":%u,\"dropped\":%u,\"no_net\":%u}",
+        "\"send_us\":%u,\"sent\":%u,\"sent_fps\":%.1f,\"kbps\":%.0f,\"packets\":%u,\"dropped\":%u,\"no_net\":%u}",
         static_cast<unsigned>(node_.config().node_id), static_cast<unsigned>(state_), static_cast<unsigned>(size_),
         static_cast<unsigned>(cfg_.stream_every), static_cast<unsigned>(s.frames), static_cast<double>(fps_),
-        static_cast<unsigned>(s.frame_us), static_cast<unsigned>(s.sent_frames), static_cast<double>(sent_fps_),
+        static_cast<unsigned>(s.frame_us), static_cast<unsigned>(s.send_us), static_cast<unsigned>(s.sent_frames), static_cast<double>(sent_fps_),
         static_cast<double>(kbps_), static_cast<unsigned>(s.packets), static_cast<unsigned>(s.dropped),
         static_cast<unsigned>(s.no_net));
     return (n > 0 && static_cast<size_t>(n) < cap) ? static_cast<size_t>(n) : 0;

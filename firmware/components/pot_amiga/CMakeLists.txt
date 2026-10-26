@@ -15,8 +15,9 @@ idf_component_register(
     LDFRAGMENTS "linker.lf"
 )
 # The emulator's sources are built as their authors wrote them: their board path (ARDUINO, through shim/Arduino.h),
-# the 68000's tables in PSRAM, and their warnings not ours to fix.
+# the 68000's tables in PSRAM, and their warnings not ours to fix. Built for speed (-O2) where Potluck builds for
+# size: on a 160 MHz board a frame took 160 ms with -Os (M27, 2026-10-26).
 set_source_files_properties(${EMU_SRCS} PROPERTIES
     COMPILE_DEFINITIONS "ARDUINO=1;M68K_TABLE_ALLOC_FN=pot_amiga_table_alloc"
-    COMPILE_OPTIONS "-w")
-set_source_files_properties(src/emu.cpp src/shim.cpp PROPERTIES COMPILE_DEFINITIONS "ARDUINO=1")
+    COMPILE_OPTIONS "-w;-O2")
+set_source_files_properties(src/emu.cpp src/shim.cpp PROPERTIES COMPILE_DEFINITIONS "ARDUINO=1" COMPILE_OPTIONS "-O2")

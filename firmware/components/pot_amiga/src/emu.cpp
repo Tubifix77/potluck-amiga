@@ -62,7 +62,9 @@ int64_t g_net_checked = 0;
 TaskHandle_t g_task = nullptr;
 std::atomic<bool> g_run{false}, g_alive{false};
 std::atomic<uint8_t> g_every{0};
-std::atomic<uint32_t> g_frames{0}, g_sent{0}, g_bytes{0}, g_packets{0}, g_dropped{0}, g_no_net{0}, g_frame_us{0};
+std::atomic<uint32_t> g_frames{0}, g_sent{0}, g_bytes{0}, g_packets{0}, g_dropped{0}, g_no_net{0}, g_frame_us{0},
+    g_send_us{0};
+int64_t g_send_acc = 0;
 Config g_cfg{};
 
 bool net_ready() {
@@ -91,7 +93,10 @@ void send_packet() {
     g_pkt[3] = static_cast<uint8_t>(g_pkt_n);
     std::memcpy(g_pkt + 4, &g_frame, 4);
     const size_t len = kHeader + static_cast<size_t>(g_pkt_n) * kEntry;
-    if (sendto(g_sock, g_pkt, len, 0, reinterpret_cast<const sockaddr*>(&g_to), sizeof(g_to)) == static_cast<int>(len)) {
+    const int64_t t = esp_timer_get_time();
+    const int sent = sendto(g_sock, g_pkt, len, 0, reinterpret_cast<const sockaddr*>(&g_to), sizeof(g_to));
+    g_send_acc += esp_timer_get_time() - t;
+    if (sent == static_cast<int>(len)) {
         g_bytes.fetch_add(static_cast<uint32_t>(len));
         g_packets.fetch_add(1);
     } else {
@@ -174,6 +179,7 @@ void task(void*) {
         const int64_t t0 = esp_timer_get_time();
         const uint8_t every = g_every;
         g_streaming = false;
+        g_send_acc = 0;
         if (every != 0 && g_frame % every == 0) {
             if (net_ready()) {
                 g_streaming = true;
@@ -193,6 +199,7 @@ void task(void*) {
         g_frames.fetch_add(1);
         const int64_t t1 = esp_timer_get_time();
         g_frame_us = static_cast<uint32_t>(t1 - t0);
+        g_send_us = static_cast<uint32_t>(g_send_acc);
         next += kFrameUs;
         if (next > t1) {
             const TickType_t ticks = pdMS_TO_TICKS((next - t1) / 1000);
@@ -256,6 +263,7 @@ void emu_stats(EmuStats* out) {
     out->dropped = g_dropped;
     out->no_net = g_no_net;
     out->frame_us = g_frame_us;
+    out->send_us = g_send_us;
 }
 
 }  // namespace amiga

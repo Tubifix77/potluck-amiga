@@ -57,7 +57,8 @@ struct EmuStats {
     uint32_t packets;
     uint32_t dropped;
     uint32_t no_net;      // frames not streamed because the station had no address
-    uint32_t frame_us;    // the last frame's emulation time
+    uint32_t frame_us;    // the last frame's time, streaming included
+    uint32_t send_us;     // of which in sendto()
 };
 bool emu_alloc(uint8_t** rom);  // PSRAM for the ROM, the Amiga's RAM and the 68000's tables; false if short
 bool emu_start(const Config& cfg);
