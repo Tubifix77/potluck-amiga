@@ -1,6 +1,7 @@
 potluck-amiga -- an Amiga 500 emulator as a Potluck app (Potluck's M27 experiment)
 
-This repository contains code from these projects, under their own licences:
+LICENSE (MIT) covers this project's own code only. This repository also contains code from these projects, under
+their own licences:
 
 * amiga500-esp32 -- the Amiga 500 chipset (Agnus, Denise, Paula, the CIAs, the floppy), Copyright (c) 2026
   Massimiliano, MIT licence: firmware/components/pot_amiga/third_party/a500/ (LICENSE beside it).
@@ -9,7 +10,8 @@ This repository contains code from these projects, under their own licences:
   firmware/components/pot_amiga/third_party/musashi/ (its readme.txt holds the licence). Taken from the
   amiga500-esp32 copy above (m68kconf.h from its esp32/ folder: a plain 68000).
 * SoftFloat, Release 2 -- John R. Hauser, through MAME and Musashi: third_party/musashi/softfloat/. THIS IS A
-  DERIVATIVE WORK of SoftFloat: the files there are kept with their notices, as its terms ask (softfloat.h).
+  DERIVATIVE WORK of SoftFloat: the files there are kept with their notices, as its terms ask (softfloat.h);
+  mamesf.h, MAME's short configuration header for its repackaging, is covered by the same terms (README.txt there).
 
 Changes made here to the code above:
 
